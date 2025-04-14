@@ -44,7 +44,7 @@ export default function IncomePage() {
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="end">
             <Calendar
-              mode="month"
+              mode="single"
               selected={date}
               onSelect={handleSelect}
               initialFocus
