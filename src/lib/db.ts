@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 
-// Use 127.0.0.1 explicitly instead of localhost to avoid IPv6 resolution issues
+// Get MongoDB URI from environment variable with fallback
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/finance-visualizer';
 
+// Global mongoose connection setup for serverless environment
 declare global {
   var mongoose: {
     conn: typeof mongoose | null;
@@ -24,28 +25,33 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: true,
-      serverSelectionTimeoutMS: 5000, // Reduce timeout for faster feedback
+      serverSelectionTimeoutMS: 10000, // Increased timeout for cloud environments
+      maxPoolSize: 10, // Optimize connection pool for serverless
+      minPoolSize: 5, // Maintain minimum connections
       family: 4, // Force IPv4
     };
 
-    console.log('Connecting to MongoDB...', MONGODB_URI.replace(/mongodb:\/\/.*@/, 'mongodb://****@'));
+    // Sanitize connection string before logging
+    const sanitizedUri = MONGODB_URI.replace(/mongodb(\+srv)?:\/\/[^@]+@/, 'mongodb$1://****@');
+    console.log('Connecting to MongoDB...', sanitizedUri);
     
     cached.promise = mongoose.connect(MONGODB_URI, opts)
       .then((mongoose) => {
-        console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB successfully');
         return mongoose;
       })
       .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
         cached.promise = null; // Reset the promise on error
         throw error;
-      });
+      }) as Promise<typeof mongoose>;
   }
   
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    console.error('Failed to resolve MongoDB connection:', e);
     throw e;
   }
 

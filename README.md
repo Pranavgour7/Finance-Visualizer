@@ -1,78 +1,103 @@
 # Finance Visualizer
 
-A simple web application for tracking personal finances.
+A financial tracking and visualization application built with Next.js, MongoDB, and Tailwind CSS.
 
 ## Features
 
-### Transaction Tracking
-- Add, edit, and delete transactions with amount, date, description, and category
-- View all transactions in a list
-- Visual representation of monthly expenses with bar chart
-
-### Category Management
-- Categorize transactions (Food, Housing, Transportation, etc.)
-- Category-wise breakdown with pie chart
-- Dashboard with summary cards showing total expenses, category breakdown
-
-### Budgeting
-- Set monthly budgets by category
-- Compare actual spending against budgets
-- Visual insights to track spending habits
+- Track income and expenses
+- Create and manage budgets by category
+- Visualize spending patterns
+- Monthly financial summaries
+- Responsive design
 
 ## Tech Stack
 
-- **Frontend**: Next.js, React, Tailwind CSS, shadcn/ui
-- **Data Visualization**: Recharts
+- **Frontend**: Next.js 14, React, Tailwind CSS, Recharts
 - **Backend**: Next.js API Routes
-- **Database**: MongoDB with Mongoose
-- **Validation**: Zod
-- **Forms**: React Hook Form
+- **Database**: MongoDB
+- **Authentication**: (TBD)
+- **Deployment**: Vercel
 
-## Getting Started
+## Deployment Instructions
 
-### Prerequisites
+### Deploy to Vercel
 
-- Node.js 16.8 or later
-- MongoDB (either local or cloud-based like MongoDB Atlas)
+1. **Fork or clone this repository**
 
-### Installation
+2. **Connect to Vercel**:
+   - Sign up or log in to [Vercel](https://vercel.com)
+   - Create a new project and import your GitHub repository
+   - Select the Next.js framework preset
 
-1. Clone the repository:
+3. **Configure Environment Variables**:
+   - Add the following environment variable in the Vercel dashboard:
+     - `MONGODB_URI`: Your MongoDB Atlas connection string
+   
+4. **Deploy**:
+   - Click "Deploy" and wait for the build to complete
 
-```bash
-git clone https://github.com/yourusername/finance-visualizer.git
-cd finance-visualizer
-```
+### MongoDB Setup
 
-2. Install dependencies:
+1. Create a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account
+2. Create a new cluster
+3. Create a database user with read/write permissions
+4. Whitelist all IP addresses (0.0.0.0/0) or specific IPs
+5. Get your connection string and add it to Vercel environment variables
 
-```bash
-npm install
-```
+## Local Development
+
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/finance-visualizer.git
+   cd finance-visualizer
+   ```
+
+2. Install dependencies
+   ```
+   npm install
+   ```
 
 3. Set up environment variables:
+   Create a `.env.local` file with:
+   ```
+   MONGODB_URI=mongodb://127.0.0.1:27017/finance-visualizer
+   ```
 
-Create a `.env.local` file in the root directory and add:
+4. Run the development server
+   ```
+   npm run dev
+   ```
+
+   **For Windows users:**
+   ```
+   npm run dev:win
+   ```
+   
+   Or use the provided batch file:
+   ```
+   run-project.bat
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000)
+
+## Production Build
 
 ```
-MONGODB_URI=your_mongodb_connection_string
+npm run build
+npm start
 ```
 
-4. Run the development server:
-
-```bash
-npm run dev
+**For Windows users:**
+```
+npm run build:win
+npm start
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Or to prepare for Vercel deployment:
+```
+prepare-for-vercel.bat
+```
 
 ## Project Structure
 
-- `src/app` - Next.js app router pages and API routes
-- `src/components` - React components
-- `src/lib` - Utility functions, database connection, types, and models
-- `public` - Static assets
-
-## License
-
-This project is licensed under the MIT License.
+- `src/app`
