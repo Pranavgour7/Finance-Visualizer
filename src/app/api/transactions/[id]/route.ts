@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
-import { Transaction } from '@/lib/models';
 import { z } from 'zod';
-import { Category } from '@/lib/types';
+import { Category } from '@/shared/types';
+import * as transactionService from '@/backend/services/transactionService';
 
 // Schema for transaction validation
 const transactionSchema = z.object({
@@ -12,14 +11,16 @@ const transactionSchema = z.object({
   category: z.nativeEnum(Category).default(Category.OTHER),
 });
 
-// GET transaction by ID
+/**
+ * GET transaction by ID
+ */
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    await dbConnect();
-    const transaction = await Transaction.findById(params.id);
+    // Using findById from the transaction service
+    const transaction = await transactionService.getTransactionById(params.id);
     
     if (!transaction) {
       return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
@@ -32,7 +33,9 @@ export async function GET(
   }
 }
 
-// PUT (update) transaction by ID
+/**
+ * PUT (update) transaction by ID
+ */
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -43,11 +46,9 @@ export async function PUT(
     
     const validatedData = transactionSchema.parse(body);
     
-    await dbConnect();
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
+    const updatedTransaction = await transactionService.updateTransaction(
       params.id,
-      validatedData,
-      { new: true, runValidators: true }
+      validatedData
     );
     
     if (!updatedTransaction) {
@@ -64,15 +65,17 @@ export async function PUT(
   }
 }
 
-// DELETE transaction by ID
+/**
+ * DELETE transaction by ID
+ */
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     console.log("Delete request for transaction:", params.id);
-    await dbConnect();
-    const deletedTransaction = await Transaction.findByIdAndDelete(params.id);
+    
+    const deletedTransaction = await transactionService.deleteTransaction(params.id);
     
     if (!deletedTransaction) {
       return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
